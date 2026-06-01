@@ -1,0 +1,23 @@
+node_modules
+.DS_Store
+dist
+
+# Cache tuiles Overpass (export sinuosité)
+public/data/.sinuosity-tiles/
+
+# Données volumineuses
+data/raw/**
+data/processed/**
+!data/README.md
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+dist-ssr
+*.local
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+__unconfig*
+todos.json

@@ -1,0 +1,49 @@
+import { describe, expect, it } from "vitest";
+
+import { computeRideabilityScore } from "./scoring";
+
+describe("computeRideabilityScore", () => {
+	const base = {
+		precipitationMm: 0,
+		precipitationProbability: 10,
+		windSpeedKmh: 15,
+		cloudCoverPercent: 20,
+		isDay: true,
+		sunrise: new Date("2026-06-01T05:30:00"),
+		sunset: new Date("2026-06-01T21:30:00"),
+	};
+
+	it("favorise une journée ensoleillée et douce", () => {
+		const result = computeRideabilityScore({
+			...base,
+			at: new Date("2026-06-01T14:00:00"),
+			temperatureC: 20,
+		});
+		expect(result.score).toBeGreaterThanOrEqual(70);
+	});
+
+	it("pénalise la pluie forte", () => {
+		const result = computeRideabilityScore({
+			...base,
+			at: new Date("2026-06-01T14:00:00"),
+			temperatureC: 18,
+			precipitationMm: 3,
+			precipitationProbability: 90,
+		});
+		expect(result.score).toBeLessThan(50);
+	});
+
+	it("bonus golden hour", () => {
+		const day = computeRideabilityScore({
+			...base,
+			at: new Date("2026-06-01T14:00:00"),
+			temperatureC: 20,
+		});
+		const golden = computeRideabilityScore({
+			...base,
+			at: new Date("2026-06-01T20:45:00"),
+			temperatureC: 20,
+		});
+		expect(golden.score).toBeGreaterThanOrEqual(day.score - 5);
+	});
+});
