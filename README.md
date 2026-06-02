@@ -46,10 +46,30 @@ Pas d’itinéraire A→B. Pas de navigation turn-by-turn.
 git clone <repo-url> && cd <repo>
 npm install
 npm run dev      # http://localhost:3000
-npm run build
+npm run build    # build statique → dist/client/
 npm run check    # biome format + lint
 npm run test
 ```
+
+### Déploiement statique
+
+Le build pré-rend toutes les pages publiques (landing, guides SEO, légal, `/app`, `/share`) en HTML dans **`dist/client/`**. Aucun serveur Node requis en production.
+
+```bash
+npm run build
+npm run preview:static   # sert dist/client/ (comme Cloudflare Pages, sans Node SSR)
+```
+
+`npm run preview` lance encore le mode SSR TanStack (dev post-build).  
+`npm run preview:static` sert uniquement les fichiers pré-rendus — c’est ce qu’il faut pour valider le déploiement statique.
+
+**Cloudflare Pages** (recommandé) :
+
+- Commande de build : `npm run build`
+- Dossier de sortie : `dist/client`
+- Ou avec Wrangler : `npx wrangler pages deploy dist/client` (voir `wrangler.jsonc`)
+
+Les GeoJSON dans `public/data/` sont copiés dans le build. La météo appelle Open-Meteo depuis le navigateur.
 
 ### Data pipeline
 

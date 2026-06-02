@@ -1,0 +1,4 @@
+# Cloudflare Pages / Netlify — fallback SPA (après les fichiers statiques existants)
+/share/*  /share/index.html  200
+/app/*    /app/index.html    200
+/*        /index.html        200

@@ -10,6 +10,7 @@ const shareSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/share")({
+	ssr: false,
 	validateSearch: shareSearchSchema,
 	head: () =>
 		buildPageHead({

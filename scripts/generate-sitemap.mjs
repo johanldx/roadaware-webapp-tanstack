@@ -1,6 +1,6 @@
 import { writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const SITE_ORIGIN = "https://roadaware.gondawa.fr";
 
@@ -30,6 +30,11 @@ ${urls}
 </urlset>
 `;
 
-const out = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "sitemap.xml");
+const out = join(
+	dirname(fileURLToPath(import.meta.url)),
+	"..",
+	"public",
+	"sitemap.xml",
+);
 writeFileSync(out, xml, "utf8");
 console.log(`Sitemap écrit : ${out}`);

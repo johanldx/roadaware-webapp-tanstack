@@ -14,6 +14,7 @@ const mapSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/app")({
+	ssr: false,
 	validateSearch: mapSearchSchema,
 	head: () =>
 		buildPageHead({
