@@ -65,9 +65,13 @@ npm run preview:static   # sert dist/client/ (comme Cloudflare Pages, sans Node 
 
 **Cloudflare Pages** (recommandé) :
 
-- Commande de build : `npm run build`
-- Dossier de sortie : `dist/client`
-- Ou avec Wrangler : `npx wrangler pages deploy dist/client` (voir `wrangler.jsonc`)
+| Paramètre | Valeur |
+|-----------|--------|
+| Framework preset | Aucun |
+| Commande de build | `npm run build` |
+| Répertoire de sortie | `dist/client` |
+
+Le fichier `wrangler.toml` définit `pages_build_output_dir` pour la détection automatique.
 
 Les GeoJSON dans `public/data/` sont copiés dans le build. La météo appelle Open-Meteo depuis le navigateur.
 
