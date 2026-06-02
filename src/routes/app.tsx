@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 const mapSearchSchema = z.object({
+	/** État carte encodé (position, calques, météo, fond) */
+	s: z.string().optional(),
 	lat: z.coerce.number().optional(),
 	lng: z.coerce.number().optional(),
 	zoom: z.coerce.number().optional(),

@@ -70,19 +70,26 @@ function blockScore(
 	return count > 0 ? Math.round(sum / count) : 50;
 }
 
+function geoDist2(
+	a: { lng: number; lat: number },
+	b: { lng: number; lat: number },
+): number {
+	const dlng = a.lng - b.lng;
+	const dlat = a.lat - b.lat;
+	return dlng * dlng + dlat * dlat;
+}
+
 export function aggregatedZonesGeoJson(
 	displayScores: Map<string, number>,
 	blockSize: number,
 ): FeatureCollection<Point> {
 	const { cols, rows } = IDF_DISPLAY_GRID;
 	const features: Feature<Point>[] = [];
-
 	for (let br = 0; br < rows; br += blockSize) {
 		for (let bc = 0; bc < cols; bc += blockSize) {
 			const score = blockScore(displayScores, br, bc, blockSize);
 			const { lat, lng } = blockCenterLngLat(br, bc, blockSize);
 			if (!isInIdfWorkArea(lng, lat)) continue;
-
 			features.push({
 				type: "Feature",
 				id: `agg-r${br}c${bc}-b${blockSize}`,
@@ -96,6 +103,35 @@ export function aggregatedZonesGeoJson(
 	}
 
 	return { type: "FeatureCollection", features };
+}
+
+/** Trouve le bloc affiché le plus proche d'un clic (même sans pastille sous le pointeur). */
+export function findClosestZoneBlock(
+	displayScores: Map<string, number>,
+	blockSize: number,
+	lngLat: { lng: number; lat: number },
+): ZoneBlockProps | null {
+	const { cols, rows } = IDF_DISPLAY_GRID;
+	let best: ZoneBlockProps | null = null;
+	let bestDist = Infinity;
+
+	for (let br = 0; br < rows; br += blockSize) {
+		for (let bc = 0; bc < cols; bc += blockSize) {
+			const center = blockCenterLngLat(br, bc, blockSize);
+			if (!isInIdfWorkArea(center.lng, center.lat)) continue;
+			const d2 = geoDist2(center, lngLat);
+			if (d2 >= bestDist) continue;
+			bestDist = d2;
+			best = {
+				score: blockScore(displayScores, br, bc, blockSize),
+				blockSize,
+				br,
+				bc,
+			};
+		}
+	}
+
+	return best;
 }
 
 /** Détail popup cohérent avec le score de la pastille. */

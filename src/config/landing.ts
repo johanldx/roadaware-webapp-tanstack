@@ -40,7 +40,14 @@ export const HOW_IT_WORKS = [
 export const MAP_LAYERS = [
 	{
 		name: "Sinuosité",
-		description: "Routes colorées du vert au rouge selon leurs virages.",
+		description:
+			"Routes en nuances de violet : plus foncé = plus de virages (routes principales OSM).",
+		tag: "Précalculé",
+	},
+	{
+		name: "Relief",
+		description:
+			"Filtre relief : virages avec pente/dénivelé notable (niveau en nuances de gris).",
 		tag: "Précalculé",
 	},
 	{

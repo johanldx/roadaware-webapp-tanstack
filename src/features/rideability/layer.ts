@@ -20,7 +20,13 @@ import {
 export const RIDEABILITY_IMAGE_SOURCE = "source-rideability-image";
 export const RIDEABILITY_IMAGE_LAYER = "layer-rideability-image";
 export const RIDEABILITY_BOUNDARY_SOURCE = "source-idf-boundary";
-export const RIDEABILITY_BOUNDARY_LAYER = "layer-idf-boundary";
+const LEGACY_BOUNDARY_LAYERS = [
+	"layer-idf-boundary",
+	"layer-idf-boundary-glow",
+	"layer-idf-boundary-halo",
+] as const;
+
+const RIDEABILITY_BOUNDARY_LINE_LAYER = "layer-idf-boundary-line";
 export const RIDEABILITY_ZONES_SOURCE = "source-rideability-zones";
 export const RIDEABILITY_BADGE_BG_LAYER = "layer-rideability-badge-bg";
 export const RIDEABILITY_BADGE_TEXT_LAYER = "layer-rideability-badge-text";
@@ -30,12 +36,20 @@ export const RIDEABILITY_ZONES_HIT_LAYER = "layer-rideability-zones-hit";
 const LEGACY_LABELS_LAYER = "layer-rideability-zones-labels";
 
 const RIDEABILITY_LAYERS = [
-	RIDEABILITY_BOUNDARY_LAYER,
 	RIDEABILITY_IMAGE_LAYER,
 	RIDEABILITY_BADGE_BG_LAYER,
 	RIDEABILITY_BADGE_TEXT_LAYER,
 	RIDEABILITY_ZONES_HIT_LAYER,
 ] as const;
+
+function removeLegacyBoundaryLayers(map: MapLibreMap) {
+	for (const id of LEGACY_BOUNDARY_LAYERS) {
+		if (map.getLayer(id)) map.removeLayer(id);
+	}
+	if (map.getLayer(RIDEABILITY_BOUNDARY_LINE_LAYER)) {
+		map.removeLayer(RIDEABILITY_BOUNDARY_LINE_LAYER);
+	}
+}
 
 const SCORE_CIRCLE_COLOR: maplibregl.ExpressionSpecification = [
 	"interpolate",
@@ -103,31 +117,18 @@ export function ensureRideabilityLayers(map: MapLibreMap) {
 		img.setCoordinates(imageCoords);
 	}
 
-	if (!map.getLayer(RIDEABILITY_BOUNDARY_LAYER)) {
-		map.addLayer({
-			id: RIDEABILITY_BOUNDARY_LAYER,
-			type: "line",
-			source: RIDEABILITY_BOUNDARY_SOURCE,
-			paint: {
-				"line-color": "rgba(55, 55, 55, 0.4)",
-				"line-width": 1.5,
-			},
-		});
-	}
+	removeLegacyBoundaryLayers(map);
 
 	if (!map.getLayer(RIDEABILITY_IMAGE_LAYER)) {
-		map.addLayer(
-			{
-				id: RIDEABILITY_IMAGE_LAYER,
-				type: "raster",
-				source: RIDEABILITY_IMAGE_SOURCE,
-				paint: {
-					"raster-opacity": 0.78,
-					"raster-fade-duration": 0,
-				},
+		map.addLayer({
+			id: RIDEABILITY_IMAGE_LAYER,
+			type: "raster",
+			source: RIDEABILITY_IMAGE_SOURCE,
+			paint: {
+				"raster-opacity": 0.78,
+				"raster-fade-duration": 0,
 			},
-			RIDEABILITY_BOUNDARY_LAYER,
-		);
+		});
 	}
 
 	if (!map.getSource(RIDEABILITY_ZONES_SOURCE)) {

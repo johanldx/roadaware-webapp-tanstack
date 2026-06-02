@@ -28,6 +28,44 @@ function regionMask(): Uint8Array {
 	return cachedMask;
 }
 
+/** Retire les pixels de bord pour couper l’auréole du flou raster. */
+function erodeMask(
+	mask: Uint8Array,
+	w: number,
+	h: number,
+	radius: number,
+): Uint8Array {
+	let current = mask;
+	for (let pass = 0; pass < radius; pass++) {
+		const next = new Uint8Array(current.length);
+		for (let py = 0; py < h; py++) {
+			for (let px = 0; px < w; px++) {
+				const idx = py * w + px;
+				if (!current[idx]) continue;
+				let inside = true;
+				for (let dy = -1; dy <= 1 && inside; dy++) {
+					for (let dx = -1; dx <= 1 && inside; dx++) {
+						const nx = px + dx;
+						const ny = py + dy;
+						if (
+							nx < 0 ||
+							nx >= w ||
+							ny < 0 ||
+							ny >= h ||
+							!current[ny * w + nx]
+						) {
+							inside = false;
+						}
+					}
+				}
+				if (inside) next[idx] = 1;
+			}
+		}
+		current = next;
+	}
+	return current;
+}
+
 function dist2(lat1: number, lng1: number, lat2: number, lng2: number) {
 	const dLat = lat2 - lat1;
 	const dLng = (lng2 - lng1) * Math.cos((lat1 * Math.PI) / 180);
@@ -124,6 +162,7 @@ export function renderSmoothFieldImage(samples: ScoreSample[]): {
 } {
 	const { west, south, east, north } = IDF_BOUNDS;
 	const mask = regionMask();
+	const edgeMask = erodeMask(mask, W, H, 2);
 	const canvas = document.createElement("canvas");
 	canvas.width = W;
 	canvas.height = H;
@@ -153,14 +192,17 @@ export function renderSmoothFieldImage(samples: ScoreSample[]): {
 		}
 	}
 
-	const blurred = boxBlur(d, W, H, 4);
+	// Flou très léger ; le masque érodé coupe l’auréole au contour IDF
+	const blurred = boxBlur(d, W, H, 1);
 	for (let py = 0; py < H; py++) {
 		for (let px = 0; px < W; px++) {
 			const idx = py * W + px;
 			const i = idx * 4;
-			if (!mask[idx]) {
+			if (!edgeMask[idx]) {
 				blurred[i + 3] = 0;
+				continue;
 			}
+			blurred[i + 3] = Math.round(0.74 * 255);
 		}
 	}
 

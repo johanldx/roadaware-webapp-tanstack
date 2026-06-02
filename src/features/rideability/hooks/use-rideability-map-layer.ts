@@ -20,6 +20,7 @@ import { useRideabilityStore } from "./use-rideability-store";
 
 export function useRideabilityMapLayer() {
 	const map = useMapStore((s) => s.map);
+	const styleEpoch = useMapStore((s) => s.styleEpoch);
 	const enabled = useLayersStore((s) => s.enabled.rideability);
 	const selectedAt = useRideabilityStore((s) => s.selectedAt);
 
@@ -56,6 +57,7 @@ export function useRideabilityMapLayer() {
 
 	useEffect(() => {
 		if (!map) return;
+		void styleEpoch;
 
 		const render = () => {
 			if (shouldHideRideabilityLayer(enabled, isLoading, hasData) || !data) {
@@ -67,7 +69,7 @@ export function useRideabilityMapLayer() {
 		};
 
 		return runWhenMapReady(map, render);
-	}, [map, data, enabled, isLoading, hasData]);
+	}, [map, data, enabled, isLoading, hasData, styleEpoch]);
 
 	useEffect(() => {
 		if (!map || !enabled) return;

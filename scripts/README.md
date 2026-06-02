@@ -7,6 +7,7 @@ Pipeline Python exécuté **en local**, hors navigateur. Produit les fichiers se
 1. **ingest/** — Téléchargement BAAC, TMJA département pilote, extract OSM
 2. **Radars fixes IDF** — `pnpm data:radars` → `public/data/radars-idf.geojson` ([liste déc. 2025](https://www.data.gouv.fr/datasets/liste-des-radars-fixes-en-france/), VMA à jour)
 3. **Sinuosité IDF** — `pnpm data:sinuosity` → `public/data/sinuosity-idf.geojson` (1 requête Overpass, ~2–5 min ; cache dans `.sinuosity-tiles/`)
+4. **Relief IDF** — `pnpm data:relief` → `public/data/relief-idf.geojson` (grille altitudes OpenTopoData + réseau routier ; cache `.elevation-grid-idf.json`)
    - `pnpm data:sinuosity:merge` — regénère le GeoJSON depuis le cache sans réseau
    - `node scripts/export-sinuosity-geojson.mjs --tiled` — 4 tuiles parallèles si la requête unique échoue
 4. **Réseau routier IDF** (snap) — `pnpm data:roads` → `public/data/roads-idf.geojson` (nécessite tuiles `data:sinuosity`)

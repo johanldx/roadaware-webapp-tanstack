@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, Camera, CloudSun, Route } from "lucide-react";
+import { AlertTriangle, Camera, CloudSun, Mountain, Route } from "lucide-react";
 
 import {
 	GlassSheet,
@@ -20,7 +20,17 @@ const LAYER_ICONS: Record<LayerId, LucideIcon> = {
 	rideability: CloudSun,
 	radars: Camera,
 	risk: AlertTriangle,
+	relief: Mountain,
 };
+
+const BETA_LAYER_IDS: LayerId[] = ["sinuosity", "risk", "relief"];
+
+const ORDERED_LAYER_IDS: LayerId[] = [
+	...Object.keys(LAYER_DEFINITIONS).filter(
+		(id): id is LayerId => !BETA_LAYER_IDS.includes(id as LayerId),
+	),
+	...BETA_LAYER_IDS,
+];
 
 export function LayerPanel() {
 	const open = useLayersStore((s) => s.panelOpen);
@@ -47,22 +57,32 @@ export function LayerPanel() {
 
 				<GlassSheetBody className="map-app__sheet-body">
 					<ul className="map-app__layer-list">
-						{Object.values(LAYER_DEFINITIONS).map((layer) => (
-							<LayerCard
-								key={layer.id}
-								id={layer.id}
-								label={layer.label}
-								description={layer.description}
-								checked={enabled[layer.id]}
-								disabled={!layer.available}
-								onCheckedChange={(v) => {
-									setLayerEnabled(layer.id, v);
-									if (layer.id === "rideability" && !v) {
-										setRideabilityPanelOpen(false);
-									}
-								}}
-							/>
-						))}
+						{ORDERED_LAYER_IDS.map((layerId) => {
+							const layer = LAYER_DEFINITIONS[layerId];
+							return (
+								<LayerCard
+									key={layer.id}
+									id={layer.id}
+									label={layer.label}
+									description={layer.description}
+									checked={enabled[layer.id]}
+									disabled={!layer.available}
+									onCheckedChange={(v) => {
+										setLayerEnabled(layer.id, v);
+										// Relief et sinuosité affichent des infos proches : éviter la soupe visuelle.
+										if (layer.id === "relief" && v) {
+											setLayerEnabled("sinuosity", false);
+										}
+										if (layer.id === "sinuosity" && v) {
+											setLayerEnabled("relief", false);
+										}
+										if (layer.id === "rideability" && !v) {
+											setRideabilityPanelOpen(false);
+										}
+									}}
+								/>
+							);
+						})}
 					</ul>
 				</GlassSheetBody>
 			</GlassSheetContent>
@@ -104,6 +124,11 @@ function LayerCard({
 				<span className="map-app__layer-text">
 					<span className="map-app__layer-head">
 						<span className="map-app__layer-label">{label}</span>
+						{BETA_LAYER_IDS.includes(id) && (
+							<span className="map-app__layer-badge map-app__layer-badge--beta">
+								BETA
+							</span>
+						)}
 						{disabled && <span className="map-app__layer-badge">Bientôt</span>}
 					</span>
 					<span className="map-app__layer-desc">{description}</span>

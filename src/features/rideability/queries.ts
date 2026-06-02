@@ -13,7 +13,33 @@ export type { RideabilityGridCache, ScoreSampleDetail } from "./grid-cache";
 
 import { weatherSnapshotAt } from "./weather-snapshot";
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const FORECAST_CONCURRENCY = 5;
+
+async function mapWithConcurrency<T, R>(
+	items: readonly T[],
+	limit: number,
+	mapper: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+	const out = new Array<R>(items.length);
+	let cursor = 0;
+
+	const worker = async () => {
+		while (true) {
+			const idx = cursor;
+			cursor += 1;
+			if (idx >= items.length) return;
+			const item = items[idx];
+			if (item === undefined) return;
+			out[idx] = await mapper(item, idx);
+		}
+	};
+
+	const workers = Array.from({ length: Math.min(limit, items.length) }, () =>
+		worker(),
+	);
+	await Promise.all(workers);
+	return out;
+}
 
 export async function fetchPointRideability(
 	lat: number,
@@ -47,22 +73,23 @@ export function rideabilityGridQueryOptions(selectedAt: Date) {
 	return queryOptions({
 		queryKey: [...queryKeys.rideability.all, "grid", atKey] as const,
 		queryFn: async (): Promise<RideabilityGridData> => {
-			const samples: ScoreSampleDetail[] = [];
-
-			for (const cell of IDF_SAMPLE_CELLS) {
-				const result = await fetchPointRideability(
-					cell.lat,
-					cell.lng,
-					selectedAt,
-				);
-				samples.push({
-					lat: cell.lat,
-					lng: cell.lng,
-					score: result.score,
-					result,
-				});
-				await sleep(120);
-			}
+			const samples = await mapWithConcurrency(
+				IDF_SAMPLE_CELLS,
+				FORECAST_CONCURRENCY,
+				async (cell): Promise<ScoreSampleDetail> => {
+					const result = await fetchPointRideability(
+						cell.lat,
+						cell.lng,
+						selectedAt,
+					);
+					return {
+						lat: cell.lat,
+						lng: cell.lng,
+						score: result.score,
+						result,
+					};
+				},
+			);
 
 			const displayScores = interpolateDisplayScores(
 				samples,

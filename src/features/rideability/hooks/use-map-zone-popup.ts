@@ -7,6 +7,9 @@ import { getRuntimeGridCache } from "#/features/rideability/grid-cache-runtime";
 import { labelFromScore } from "#/features/rideability/scoring";
 import {
 	blockCenterLngLat,
+	blockSizeForZoom,
+	findClosestZoneBlock,
+	normalizeDisplayScores,
 	rideabilityForZoneBlock,
 	type ZoneBlockProps,
 } from "#/features/rideability/zone-aggregation";
@@ -81,13 +84,10 @@ export function useMapZonePopup() {
 			loadSeq += 1;
 		});
 
-		const onEnter = (e: maplibregl.MapLayerMouseEvent) => {
-			if (pinned) return;
-			const f = e.features?.[0];
-			if (!f?.geometry || f.geometry.type !== "Point") return;
+		const previewFeature = (f: maplibregl.MapGeoJSONFeature) => {
+			if (!f.geometry || f.geometry.type !== "Point") return;
 			const props = zonePropsFromFeature(f);
 			if (!props) return;
-
 			map.getCanvas().style.cursor = "pointer";
 			const coords = f.geometry.coordinates as [number, number];
 			showContent(
@@ -96,14 +96,8 @@ export function useMapZonePopup() {
 			);
 		};
 
-		const onLeave = () => {
-			map.getCanvas().style.cursor = "";
-			if (!pinned) popup.remove();
-		};
-
-		const onClick = (e: maplibregl.MapLayerMouseEvent) => {
-			const f = e.features?.[0];
-			if (!f?.geometry || f.geometry.type !== "Point") return;
+		const openDetailedFeature = (f: maplibregl.MapGeoJSONFeature) => {
+			if (!f.geometry || f.geometry.type !== "Point") return;
 			const props = zonePropsFromFeature(f);
 			if (!props) return;
 
@@ -150,6 +144,37 @@ export function useMapZonePopup() {
 				});
 		};
 
+		const onEnter = (e: maplibregl.MapLayerMouseEvent) => {
+			if (pinned) return;
+			const f = e.features?.[0];
+			if (!f) return;
+			previewFeature(f);
+		};
+
+		const onLeave = () => {
+			map.getCanvas().style.cursor = "";
+			if (!pinned) popup.remove();
+		};
+
+		const onClick = (e: maplibregl.MapLayerMouseEvent) => {
+			const f = e.features?.[0];
+			if (!f) return;
+			openDetailedFeature(f);
+		};
+
+		const onMoveAnywhere = (e: maplibregl.MapMouseEvent) => {
+			if (pinned) return;
+			const f = map.queryRenderedFeatures(e.point, {
+				layers: [RIDEABILITY_ZONES_HIT_LAYER],
+			})[0];
+			if (!f) {
+				popup.remove();
+				map.getCanvas().style.cursor = "";
+				return;
+			}
+			previewFeature(f);
+		};
+
 		const dismissPopup = (point?: maplibregl.Point) => {
 			if (!popup.isOpen()) return;
 			if (point) {
@@ -162,7 +187,44 @@ export function useMapZonePopup() {
 		};
 
 		const onMapClick = (e: maplibregl.MapMouseEvent) => {
-			dismissPopup(e.point);
+			const f = map.queryRenderedFeatures(e.point, {
+				layers: [RIDEABILITY_ZONES_HIT_LAYER],
+			})[0];
+			if (f) {
+				openDetailedFeature(f);
+				return;
+			}
+			const cache = getRuntimeGridCache();
+			const scores = cache?.displayScores;
+			if (!scores) {
+				dismissPopup(e.point);
+				return;
+			}
+			const blockSize = blockSizeForZoom(map.getZoom());
+			const nearest = findClosestZoneBlock(
+				normalizeDisplayScores(scores),
+				blockSize,
+				e.lngLat,
+			);
+			if (!nearest) {
+				dismissPopup(e.point);
+				return;
+			}
+			const synthetic = {
+				type: "Feature",
+				id: `click-r${nearest.br}c${nearest.bc}-b${nearest.blockSize}`,
+				properties: {
+					score: nearest.score,
+					blockSize: nearest.blockSize,
+					br: nearest.br,
+					bc: nearest.bc,
+				},
+				geometry: {
+					type: "Point",
+					coordinates: [e.lngLat.lng, e.lngLat.lat],
+				},
+			} as unknown as maplibregl.MapGeoJSONFeature;
+			openDetailedFeature(synthetic);
 		};
 
 		const onDocumentPointerDown = (e: PointerEvent) => {
@@ -176,6 +238,7 @@ export function useMapZonePopup() {
 		map.on("mouseenter", RIDEABILITY_ZONES_HIT_LAYER, onEnter);
 		map.on("mouseleave", RIDEABILITY_ZONES_HIT_LAYER, onLeave);
 		map.on("click", RIDEABILITY_ZONES_HIT_LAYER, onClick);
+		map.on("mousemove", onMoveAnywhere);
 		map.on("click", onMapClick);
 		document.addEventListener("pointerdown", onDocumentPointerDown, true);
 
@@ -184,6 +247,7 @@ export function useMapZonePopup() {
 			map.off("mouseenter", RIDEABILITY_ZONES_HIT_LAYER, onEnter);
 			map.off("mouseleave", RIDEABILITY_ZONES_HIT_LAYER, onLeave);
 			map.off("click", RIDEABILITY_ZONES_HIT_LAYER, onClick);
+			map.off("mousemove", onMoveAnywhere);
 			map.off("click", onMapClick);
 			document.removeEventListener("pointerdown", onDocumentPointerDown, true);
 			popup.remove();

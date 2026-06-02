@@ -1,6 +1,6 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useEffect } from "react";
-
+import { useMapStore } from "./hooks/use-map-store";
 import { runWhenMapReady } from "./run-when-map-ready";
 
 /**
@@ -10,8 +10,11 @@ export function useMapLayerOnViewport(
 	map: MapLibreMap | null,
 	apply: () => void,
 ) {
+	const styleEpoch = useMapStore((s) => s.styleEpoch);
+
 	useEffect(() => {
 		if (!map) return;
+		void styleEpoch;
 
 		let cancelReady = () => {};
 
@@ -29,5 +32,5 @@ export function useMapLayerOnViewport(
 			map.off("moveend", run);
 			map.off("zoomend", run);
 		};
-	}, [map, apply]);
+	}, [map, apply, styleEpoch]);
 }

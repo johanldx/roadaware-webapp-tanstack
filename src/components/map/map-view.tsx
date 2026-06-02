@@ -1,12 +1,15 @@
 import maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
-import { BASEMAP_STYLE, DEFAULT_CENTER, DEFAULT_ZOOM } from "#/config/map";
+import { DEFAULT_CENTER, DEFAULT_ZOOM, getBasemapStyle } from "#/config/map";
 import { useRadarPopup, useRadarsMapLayer } from "#/features/layers/radars";
 import { ensureRadarsLayers } from "#/features/layers/radars/layer";
+import { useReliefMapLayer } from "#/features/layers/relief";
 import { useRiskMapLayer, useRiskPopup } from "#/features/layers/risk";
 import { ensureRiskLayers } from "#/features/layers/risk/layer";
 import { useSinuosityMapLayer } from "#/features/layers/sinuosity";
+import { useBasemapStore } from "#/features/map/hooks/use-basemap-store";
+import { switchBasemapStyle } from "#/features/map/switch-basemap";
 import { useMapZonePopup } from "#/features/rideability/hooks/use-map-zone-popup";
 import { useRideabilityMapLayer } from "#/features/rideability/hooks/use-rideability-map-layer";
 import { ensureRideabilityLayers } from "#/features/rideability/layer";
@@ -24,9 +27,12 @@ function containerSized(el: HTMLElement) {
 export function MapView() {
 	const containerRef = useRef<HTMLElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
+	const basemapId = useBasemapStore((s) => s.basemapId);
+	const basemapIdRef = useRef(basemapId);
 
 	useRideabilityMapLayer();
 	useSinuosityMapLayer();
+	useReliefMapLayer();
 	useRadarsMapLayer();
 	useRiskMapLayer();
 	useMapZonePopup();
@@ -71,9 +77,15 @@ export function MapView() {
 
 			map = new maplibregl.Map({
 				container,
-				style: BASEMAP_STYLE,
+				style: getBasemapStyle(basemapIdRef.current),
 				center: DEFAULT_CENTER,
 				zoom: DEFAULT_ZOOM,
+				// Requis pour exporter l'image de la carte (canvas lisible).
+				preserveDrawingBuffer: true,
+				pixelRatio:
+					typeof window !== "undefined"
+						? Math.min(window.devicePixelRatio, 2)
+						: 1,
 				attributionControl: false,
 				pitchWithRotate: false,
 				dragRotate: false,
@@ -114,6 +126,14 @@ export function MapView() {
 			map = null;
 		};
 	}, []);
+
+	useEffect(() => {
+		const map = mapRef.current;
+		if (!map || basemapIdRef.current === basemapId) return;
+
+		basemapIdRef.current = basemapId;
+		switchBasemapStyle(map, basemapId);
+	}, [basemapId]);
 
 	return (
 		<section

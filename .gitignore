@@ -4,6 +4,7 @@ dist
 
 # Cache tuiles Overpass (export sinuosité)
 public/data/.sinuosity-tiles/
+public/data/.elevation-grid-idf.json
 
 # Données volumineuses
 data/raw/**

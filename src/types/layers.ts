@@ -1,4 +1,9 @@
-export type LayerId = "sinuosity" | "rideability" | "radars" | "risk";
+export type LayerId =
+	| "sinuosity"
+	| "rideability"
+	| "radars"
+	| "risk"
+	| "relief";
 
 export interface LayerDefinition {
 	id: LayerId;
@@ -42,6 +47,15 @@ export const LAYER_DEFINITIONS: Record<LayerId, LayerDefinition> = {
 		label: "Risque accident",
 		description:
 			"Historique BAAC moto : densité acc./km ; ratio TMJA si comptage proche",
+		defaultEnabled: false,
+		minZoom: 9,
+		available: true,
+	},
+	relief: {
+		id: "relief",
+		label: "Relief",
+		description:
+			"Filtre relief : virages avec pente/dénivelé notable (gris clair → gris foncé)",
 		defaultEnabled: false,
 		minZoom: 9,
 		available: true,

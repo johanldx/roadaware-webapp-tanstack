@@ -1,5 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Github, Linkedin } from "lucide-react";
+import {
+	CircleCheck,
+	ExternalLink,
+	Github,
+	Layers3,
+	Linkedin,
+	MapPin,
+} from "lucide-react";
 import { BetaBadge } from "#/components/ui/beta-badge";
 import { APP_NAME, APP_TAGLINE } from "#/config/app";
 import {
@@ -22,7 +29,17 @@ const NAV = [
 	{ label: "Projet", href: "#projet" },
 ] as const;
 
+const STEP_ICONS = [MapPin, Layers3, CircleCheck] as const;
+const LAYER_BETA_NAMES = new Set(["Sinuosité", "Relief", "Risque accident"]);
+
 export function LandingPage() {
+	const precomputedLayers = MAP_LAYERS.filter(
+		(layer) => layer.tag === "Précalculé",
+	);
+	const fetchedLayers = MAP_LAYERS.filter(
+		(layer) => layer.tag !== "Précalculé",
+	);
+
 	return (
 		<div className="landing">
 			<div className="landing__hero-wrap">
@@ -90,153 +107,225 @@ export function LandingPage() {
 			</div>
 
 			<main className="landing__main">
-				<section id="fonctionnement" className="landing__section">
-					<div className="landing__section-intro">
-						<p className="landing__eyebrow">Fonctionnement</p>
-						<h2 className="landing__section-title">
-							Trois étapes, une seule question
-						</h2>
-						<p className="landing__section-lead">
-							{APP_NAME} ne trace pas votre route. Il vous aide à décider si la
-							zone que vous regardez mérite le détour — maintenant ou plus tard.
-						</p>
-					</div>
+				<section id="fonctionnement" className="landing-band">
+					<div className="landing-band__inner">
+						<header className="landing-band__header">
+							<p className="landing-band__eyebrow">Fonctionnement</p>
+							<h2 className="landing-band__title">
+								Trois étapes, une seule question
+							</h2>
+							<p className="landing-band__lead">
+								{APP_NAME} ne trace pas votre route. Il vous aide à décider si
+								la zone que vous regardez mérite le détour — maintenant ou plus
+								tard.
+							</p>
+						</header>
 
-					<ol className="landing__steps">
-						{HOW_IT_WORKS.map(({ title, description }, index) => (
-							<li key={title} className="landing__step">
-								<span className="landing__step-num" aria-hidden>
-									{index + 1}
-								</span>
-								<div className="landing__step-body">
-									<h3 className="landing__step-title">{title}</h3>
-									<p className="landing__step-desc">{description}</p>
-								</div>
-							</li>
-						))}
-					</ol>
-				</section>
-
-				<section id="donnees" className="landing__section">
-					<div className="landing__section-intro">
-						<p className="landing__eyebrow">Sur la carte</p>
-						<h2 className="landing__section-title">Calques et sources</h2>
-						<p className="landing__section-lead">
-							Chaque calque est optionnel. Données ouvertes (OSM, BAAC, TMJA,
-							météo) : le calque risque combine densité d’accidents par km et
-							ratio trafic là où un comptage officiel existe — pas partout.
-						</p>
-					</div>
-
-					<div className="landing__panel">
-						<ul className="landing__layer-list">
-							{MAP_LAYERS.map((layer) => (
-								<li key={layer.name} className="landing__layer-row">
-									<div className="landing__layer-main">
-										<span className="landing__layer-name">{layer.name}</span>
-										<span className="landing__layer-tag">{layer.tag}</span>
-									</div>
-									<p className="landing__layer-desc">{layer.description}</p>
-									{"detail" in layer && layer.detail ? (
-										<p className="landing__layer-detail">{layer.detail}</p>
-									) : null}
-								</li>
-							))}
-						</ul>
-
-						<div className="landing__panel-foot">
-							<p className="landing__panel-foot-label">Sources ouvertes</p>
-							<ul className="landing__source-links">
-								{DATA_SOURCES.map(({ name, href }) => (
-									<li key={name}>
-										<a href={href} target="_blank" rel="noopener noreferrer">
-											{name}
-										</a>
+						<ol className="landing-steps">
+							{HOW_IT_WORKS.map(({ title, description }, index) => {
+								const Icon = STEP_ICONS[index] ?? MapPin;
+								return (
+									<li key={title} className="landing-step-card">
+										<div className="landing-step-card__icon" aria-hidden>
+											<Icon className="size-5" strokeWidth={1.75} />
+										</div>
+										<span className="landing-step-card__index">
+											{String(index + 1).padStart(2, "0")}
+										</span>
+										<h3 className="landing-step-card__title">{title}</h3>
+										<p className="landing-step-card__desc">{description}</p>
 									</li>
-								))}
-							</ul>
-						</div>
-					</div>
-
-					<aside
-						className="landing__callout"
-						aria-labelledby="landing-tmja-note-title"
-					>
-						<p className="landing__callout-eyebrow">Transparence données</p>
-						<h3 id="landing-tmja-note-title" className="landing__callout-title">
-							{RISK_TMJA_NOTE.title}
-						</h3>
-						<p className="landing__callout-lead">{RISK_TMJA_NOTE.lead}</p>
-						<ul className="landing__callout-list">
-							{RISK_TMJA_NOTE.bullets.map((item) => (
-								<li key={item}>{item}</li>
-							))}
-						</ul>
-						<p className="landing__callout-meta">
-							Chiffres export IDF ({RISK_DATA_COVERAGE.years}) :{" "}
-							{RISK_DATA_COVERAGE.tmjaMatchedSegments} tronçons avec TMJA sur{" "}
-							{RISK_DATA_COVERAGE.riskSegments} affichés.
-						</p>
-					</aside>
-
-					<p className="landing__note">
-						Outil d’information — pas de navigation, pas de guidage vocal.
-						Tendance historique BAAC, pas un danger absolu ; précision
-						géographique et couverture trafic limitées, rappelées dans chaque
-						popup.
-					</p>
-
-					<div className="landing__section-cta">
-						<Link to="/app" className="landing__pill landing__pill--primary">
-							{HERO_COPY.ctaTry}
-							<span className="landing__arrow" aria-hidden>
-								→
-							</span>
-						</Link>
+								);
+							})}
+						</ol>
 					</div>
 				</section>
 
-				<section
-					id="projet"
-					className="landing__section landing__section--about"
-				>
-					<div className="landing__about">
-						<CreatorPhoto
-							src={CREATOR.photo}
-							name={CREATOR.name}
-							initials={CREATOR.initials}
-						/>
-						<div className="landing__about-body">
-							<p className="landing__about-story">{CREATOR.story}</p>
-							<footer className="landing__about-meta">
-								<span className="landing__about-name">{CREATOR.name}</span>
-								<span className="landing__about-sep" aria-hidden>
-									·
+				<section id="donnees" className="landing-band landing-band--tinted">
+					<div className="landing-band__inner landing-band__inner--wide">
+						<header className="landing-band__header">
+							<p className="landing-band__eyebrow">Sur la carte</p>
+							<h2 className="landing-band__title">
+								Calques et sources, une seule question
+							</h2>
+							<p className="landing-band__lead">
+								Ce que vous voyez à l’écran est-il fiable pour décider si cette
+								zone vaut le détour ?
+							</p>
+						</header>
+
+						<ol className="landing-steps landing-steps--data">
+							<li className="landing-step-card landing-step-card--data">
+								<div className="landing-step-card__icon" aria-hidden>
+									<Layers3 className="size-5" strokeWidth={1.75} />
+								</div>
+								<span className="landing-step-card__index">01</span>
+								<h3 className="landing-step-card__title">Lisez les calques</h3>
+								<p className="landing-step-card__desc">
+									Un calque, un signal. Vous combinez sans surcharger l’écran.
+								</p>
+								<ul
+									className="landing-data-step-layers"
+									aria-label="Liste des calques"
+								>
+									{MAP_LAYERS.map((layer) => (
+										<li key={layer.name} className="landing-data-step-layer">
+											<p className="landing-data-step-layer__name">
+												{layer.name}
+											</p>
+											<div className="landing-showcase-layer-card__badges">
+												<span
+													className="landing-layer-card__tag"
+													data-tag={layer.tag}
+												>
+													{layer.tag}
+												</span>
+												{LAYER_BETA_NAMES.has(layer.name) ? (
+													<span className="landing-layer-card__tag landing-layer-card__tag--beta">
+														BETA
+													</span>
+												) : null}
+											</div>
+										</li>
+									))}
+								</ul>
+							</li>
+
+							<li className="landing-step-card landing-step-card--data">
+								<div className="landing-step-card__icon" aria-hidden>
+									<ExternalLink className="size-5" strokeWidth={1.75} />
+								</div>
+								<span className="landing-step-card__index">02</span>
+								<h3 className="landing-step-card__title">
+									Vérifiez les sources
+								</h3>
+								<p className="landing-step-card__desc">
+									Chaque donnée pointe vers une source publique consultable.
+								</p>
+								<ul className="landing-sources-card__list landing-sources-card__list--inline">
+									{DATA_SOURCES.map(({ name, href }) => (
+										<li key={name}>
+											<a
+												href={href}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="landing-source-chip"
+											>
+												{name}
+												<ExternalLink
+													className="size-3.5 shrink-0 opacity-60"
+													strokeWidth={2}
+													aria-hidden
+												/>
+											</a>
+										</li>
+									))}
+								</ul>
+							</li>
+
+							<li className="landing-step-card landing-step-card--data">
+								<div className="landing-step-card__icon" aria-hidden>
+									<CircleCheck className="size-5" strokeWidth={1.75} />
+								</div>
+								<span className="landing-step-card__index">03</span>
+								<h3 className="landing-step-card__title">Gardez le contexte</h3>
+								<p className="landing-step-card__desc">
+									La carte éclaire une décision, elle ne remplace pas votre
+									jugement terrain.
+								</p>
+								<div className="landing-data-step-lists">
+									<div>
+										<p className="landing-showcase-note__list-title">
+											Précalculé
+										</p>
+										<ul className="landing-showcase-note__list">
+											{precomputedLayers.map((layer) => (
+												<li key={layer.name}>{layer.name}</li>
+											))}
+										</ul>
+									</div>
+									<div>
+										<p className="landing-showcase-note__list-title">
+											Récupéré
+										</p>
+										<ul className="landing-showcase-note__list">
+											{fetchedLayers.map((layer) => (
+												<li key={layer.name}>{layer.name}</li>
+											))}
+										</ul>
+									</div>
+								</div>
+								<p className="landing-data-step-note">
+									{RISK_TMJA_NOTE.lead} {RISK_DATA_COVERAGE.tmjaMatchedSegments}{" "}
+									tronçons avec TMJA sur {RISK_DATA_COVERAGE.riskSegments} (
+									{RISK_DATA_COVERAGE.years}).
+								</p>
+								<p className="landing-data-step-disclaimer">
+									Outil d’information uniquement : pas de navigation, pas de
+									guidage vocal. Tendance historique BAAC, pas un danger absolu.
+								</p>
+							</li>
+						</ol>
+
+						<div className="landing-band__cta">
+							<Link to="/app" className="landing__pill landing__pill--primary">
+								{HERO_COPY.ctaTry}
+								<span className="landing__arrow" aria-hidden>
+									→
 								</span>
-								<a
-									href={CREATOR.github}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="landing__about-link"
-								>
-									<Github className="size-3.5" strokeWidth={1.75} aria-hidden />
-									GitHub
-								</a>
-								<a
-									href={CREATOR.linkedin}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="landing__about-link"
-								>
-									<Linkedin
-										className="size-3.5"
-										strokeWidth={1.75}
-										aria-hidden
-									/>
-									LinkedIn
-								</a>
-							</footer>
+							</Link>
 						</div>
+					</div>
+				</section>
+
+				<section id="projet" className="landing-band landing-band--about">
+					<div className="landing-band__inner">
+						<header className="landing-band__header">
+							<p className="landing-band__eyebrow">Projet</p>
+							<h2 className="landing-band__title">Derrière la carte</h2>
+						</header>
+
+						<article className="landing-about-card">
+							<CreatorPhoto
+								src={CREATOR.photo}
+								name={CREATOR.name}
+								initials={CREATOR.initials}
+							/>
+							<div className="landing-about-card__body">
+								<p className="landing-about-card__story">{CREATOR.story}</p>
+								<footer className="landing-about-card__footer">
+									<p className="landing-about-card__name">{CREATOR.name}</p>
+									<div className="landing-about-card__links">
+										<a
+											href={CREATOR.github}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="landing-about-card__link"
+										>
+											<Github
+												className="size-4"
+												strokeWidth={1.75}
+												aria-hidden
+											/>
+											GitHub
+										</a>
+										<a
+											href={CREATOR.linkedin}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="landing-about-card__link"
+										>
+											<Linkedin
+												className="size-4"
+												strokeWidth={1.75}
+												aria-hidden
+											/>
+											LinkedIn
+										</a>
+									</div>
+								</footer>
+							</div>
+						</article>
 					</div>
 				</section>
 			</main>

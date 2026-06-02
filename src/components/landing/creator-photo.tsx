@@ -14,7 +14,7 @@ export function CreatorPhoto({ src, name, initials }: CreatorPhotoProps) {
 	if (failed) {
 		return (
 			<div
-				className="landing__about-photo landing__about-photo--fallback"
+				className="landing-about-card__photo landing-about-card__photo--fallback"
 				aria-hidden
 			>
 				{initials}
@@ -24,7 +24,7 @@ export function CreatorPhoto({ src, name, initials }: CreatorPhotoProps) {
 
 	return (
 		<img
-			className="landing__about-photo"
+			className="landing-about-card__photo"
 			src={src}
 			alt={name}
 			width={80}

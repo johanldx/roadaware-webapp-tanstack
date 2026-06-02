@@ -17,5 +17,6 @@ export const queryKeys = {
 		sinuosity: (bboxKey: string) => ["layer", "sinuosity", bboxKey] as const,
 		risk: (bboxKey: string) => ["layer", "risk", bboxKey] as const,
 		radars: (bboxKey: string) => ["layer", "radars", bboxKey] as const,
+		relief: (bboxKey: string) => ["layer", "relief", bboxKey] as const,
 	},
 } as const;

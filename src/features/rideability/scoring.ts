@@ -42,7 +42,7 @@ function lerp(x: number, x0: number, x1: number, y0: number, y1: number) {
 }
 
 function scoreTemperature(temp: number): { score: number; detail: string } {
-	if (temp >= 14 && temp <= 26) {
+	if (temp >= 14 && temp <= 25) {
 		const dist = Math.abs(temp - 20);
 		const score = Math.round(100 - dist * 4);
 		return {
@@ -59,12 +59,12 @@ function scoreTemperature(temp: number): { score: number; detail: string } {
 			detail: `${Math.round(temp)} °C — frais, équipement chaud conseillé`,
 		};
 	}
-	if (temp > 32) {
-		return { score: 20, detail: `${Math.round(temp)} °C — forte chaleur` };
+	if (temp > 34) {
+		return { score: 10, detail: `${Math.round(temp)} °C — chaleur écrasante` };
 	}
 	return {
-		score: Math.round(lerp(temp, 26, 32, 75, 35)),
-		detail: `${Math.round(temp)} °C — chaud à la baisse`,
+		score: Math.round(lerp(temp, 25, 34, 65, 18)),
+		detail: `${Math.round(temp)} °C — trop chaud pour rouler longtemps`,
 	};
 }
 
@@ -72,15 +72,48 @@ function scoreRain(
 	prob: number,
 	mm: number,
 ): { score: number; detail: string } {
+	if (mm >= 8) {
+		return { score: 2, detail: `Très forte pluie (~${mm.toFixed(1)} mm)` };
+	}
+	if (mm >= 4) {
+		return { score: 5, detail: `Forte pluie (~${mm.toFixed(1)} mm)` };
+	}
 	if (mm >= 2) {
-		return { score: 10, detail: `Pluie active (~${mm.toFixed(1)} mm)` };
+		return { score: 8, detail: `Pluie soutenue (~${mm.toFixed(1)} mm)` };
 	}
-	const wet = clamp(prob / 100, 0, 1) * 0.65 + clamp(mm / 1.5, 0, 1) * 0.35;
+	if (mm >= 1) {
+		return { score: 14, detail: `Pluie active (~${mm.toFixed(1)} mm)` };
+	}
+	const wet = clamp(prob / 100, 0, 1) * 0.8 + clamp(mm / 1.2, 0, 1) * 0.2;
 	const score = Math.round(100 * (1 - wet));
-	if (prob >= 60) {
-		return { score, detail: `${prob} % de pluie prévu` };
+	if (prob >= 75) {
+		return {
+			score: Math.min(score, 22),
+			detail:
+				mm >= 0.2
+					? `Pluie probable (${prob} %, ~${mm.toFixed(1)} mm)`
+					: `Pluie probable (${prob} %) — créneau défavorable`,
+		};
 	}
-	if (prob >= 25) {
+	if (prob >= 55) {
+		return {
+			score: Math.min(score, 38),
+			detail:
+				mm >= 0.2
+					? `Pluie à venir (${prob} %, ~${mm.toFixed(1)} mm)`
+					: `Pluie à venir (${prob} %)`,
+		};
+	}
+	if (prob >= 35) {
+		return {
+			score,
+			detail:
+				mm >= 0.2
+					? `${prob} % de pluie prévu (~${mm.toFixed(1)} mm)`
+					: `${prob} % de pluie prévu`,
+		};
+	}
+	if (prob >= 20) {
 		return { score, detail: `Risque de pluie modéré (${prob} %)` };
 	}
 	return {
@@ -230,8 +263,33 @@ export function computeRideabilityScore(
 			sun.score * WEIGHTS.sun,
 	);
 
+	// En plein soleil, la chaleur devient vite pénible au-dessus de 25°C.
+	if (
+		weather.isDay &&
+		weather.temperatureC > 25 &&
+		(weather.shortwaveRadiation ?? 0) >= 350
+	) {
+		const heatPenalty = Math.round(lerp(weather.temperatureC, 25, 34, 6, 18));
+		score -= heatPenalty;
+	}
+
 	if (weather.precipitationMm >= 1.5) {
 		score = Math.min(score, 42);
+	}
+	if (weather.precipitationMm >= 3) {
+		score = Math.min(score, 30);
+	}
+	if (weather.precipitationMm >= 6) {
+		score = Math.min(score, 20);
+	}
+	if (weather.precipitationMm >= 10) {
+		score = Math.min(score, 12);
+	}
+	if (weather.precipitationProbability >= 55) {
+		score = Math.min(score, 48);
+	}
+	if (weather.precipitationProbability >= 75) {
+		score = Math.min(score, 35);
 	}
 
 	return {

@@ -15,6 +15,7 @@ import { radarsGeoJsonQueryOptions } from "../queries";
 
 export function useRadarsMapLayer() {
 	const map = useMapStore((s) => s.map);
+	const styleEpoch = useMapStore((s) => s.styleEpoch);
 	const zoom = useMapStore((s) => s.zoom);
 	const enabled = useLayersStore((s) => s.enabled.radars);
 	const minZoom = LAYER_DEFINITIONS.radars.minZoom;
@@ -28,6 +29,7 @@ export function useRadarsMapLayer() {
 
 	useEffect(() => {
 		if (!map) return;
+		void styleEpoch;
 
 		const apply = () => {
 			ensureRadarsLayers(map);
@@ -40,7 +42,7 @@ export function useRadarsMapLayer() {
 		};
 
 		return runWhenMapReady(map, apply);
-	}, [map, data, showLayer]);
+	}, [map, data, showLayer, styleEpoch]);
 
 	return {
 		radarsLoading: enabled && isLoading && !data,

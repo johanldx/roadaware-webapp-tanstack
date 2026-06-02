@@ -32,6 +32,14 @@ export function setLayerEnabled(id: LayerId, enabled: boolean) {
 	}));
 }
 
+/** Une seule mise à jour store (évite les boucles URL / re-renders). */
+export function setLayersEnabled(enabled: Record<LayerId, boolean>) {
+	layersStore.setState((s) => ({
+		...s,
+		enabled: { ...s.enabled, ...enabled },
+	}));
+}
+
 export function setLayersPanelOpen(open: boolean) {
 	layersStore.setState((s) => ({ ...s, panelOpen: open }));
 }

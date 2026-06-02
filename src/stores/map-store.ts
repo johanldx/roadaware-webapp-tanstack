@@ -11,6 +11,8 @@ export interface MapState {
 	isReady: boolean;
 	/** Incrémenté à chaque nouvelle instance carte (ré-applique les calques). */
 	mapEpoch: number;
+	/** Incrémenté après un changement de fond (setStyle). */
+	styleEpoch: number;
 }
 
 const initialState: MapState = {
@@ -20,6 +22,7 @@ const initialState: MapState = {
 	bounds: null,
 	isReady: false,
 	mapEpoch: 0,
+	styleEpoch: 0,
 };
 
 export const mapStore = new Store<MapState>(initialState);
@@ -37,4 +40,8 @@ export function setMapViewport(
 	patch: Partial<Pick<MapState, "zoom" | "center" | "bounds">>,
 ) {
 	mapStore.setState((s) => ({ ...s, ...patch }));
+}
+
+export function bumpStyleEpoch() {
+	mapStore.setState((s) => ({ ...s, styleEpoch: s.styleEpoch + 1 }));
 }
