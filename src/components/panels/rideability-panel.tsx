@@ -30,24 +30,25 @@ function formatSelectedTimeFull(d: Date) {
 export function RideabilityPanel() {
 	const open = useRideabilityStore((s) => s.panelOpen);
 	const rideabilityOn = useLayersStore((s) => s.enabled.rideability);
+	const weatherClassicOn = useLayersStore((s) => s.enabled.weatherClassic);
+	const weatherModeOn = rideabilityOn || weatherClassicOn;
 	const selectedAt = useRideabilityStore((s) => s.selectedAt);
 	const { isFetching, isLoading, isError, data, isPlaceholderData } = useQuery({
 		...rideabilityGridQueryOptions(selectedAt),
-		enabled: rideabilityOn && open,
+		enabled: weatherModeOn && open,
 		placeholderData: (prev) => prev,
 	});
 	const hasData = Boolean(data?.samples?.length);
 	const gridLoading = isRideabilityGridLoading(
-		rideabilityOn,
+		weatherModeOn,
 		isLoading,
 		isFetching,
 		hasData,
 		isPlaceholderData,
 	);
-
 	const sheetSide = useSheetSide();
 
-	if (!rideabilityOn) return null;
+	if (!weatherModeOn) return null;
 
 	return (
 		<GlassSheet open={open} onOpenChange={setRideabilityPanelOpen}>
@@ -63,7 +64,7 @@ export function RideabilityPanel() {
 					<p className="map-app__eyebrow">Météo & conditions</p>
 					<h2 className="map-app__sheet-title">Roulabilité</h2>
 					<p className="map-app__sheet-lead">
-						Choisissez un créneau horaire pour colorier la carte selon la météo.
+						Choisissez un créneau horaire pour mettre a jour la vue meteo.
 					</p>
 				</GlassSheetHeader>
 

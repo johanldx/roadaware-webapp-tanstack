@@ -20,6 +20,13 @@ import {
 } from "#/features/layers/sinuosity/layer";
 import { sinuosityGeoJsonQueryOptions } from "#/features/layers/sinuosity/queries";
 import {
+	applyWeatherClassicRasterToMap,
+	applyWeatherClassicToMap,
+	type ClassicWeatherKind,
+	ensureWeatherClassicLayers,
+} from "#/features/layers/weather-classic/layer";
+import type { ScoreSampleDetail } from "#/features/rideability/grid-cache";
+import {
 	applyRideabilityToMap,
 	ensureRideabilityLayers,
 } from "#/features/rideability/layer";
@@ -30,6 +37,42 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 interface ShareMapPreviewProps {
 	state: MapShareState;
+}
+
+function weatherKindFromSample(sample: ScoreSampleDetail): ClassicWeatherKind {
+	const factorScore = (id: string) =>
+		sample.result.factors.find((item) => item.id === id)?.score ?? 50;
+	const rain = factorScore("rain");
+	const wind = factorScore("wind");
+	const sun = factorScore("sun");
+	const light = factorScore("light");
+
+	if (light <= 52 || sun <= 35) return "night";
+	if (rain <= 45) return "rain";
+	if (wind <= 52) return "wind";
+	return "sun";
+}
+
+function weatherIcon(kind: ClassicWeatherKind): string {
+	if (kind === "rain") return "🌧";
+	if (kind === "wind") return "💨";
+	if (kind === "sun") return "☀";
+	return "🌙";
+}
+
+function weatherScoreFromSample(sample: ScoreSampleDetail): number {
+	const factorScore = (id: string) =>
+		sample.result.factors.find((item) => item.id === id)?.score ?? 50;
+	const rain = factorScore("rain");
+	const wind = factorScore("wind");
+	const sun = factorScore("sun");
+	const light = factorScore("light");
+	const raw = Math.round(rain * 0.38 + wind * 0.26 + light * 0.2 + sun * 0.16);
+	const kind = weatherKindFromSample(sample);
+	if (kind === "night") return Math.min(raw, 42);
+	if (kind === "rain") return Math.min(raw, 38);
+	if (kind === "wind") return Math.min(raw, 58);
+	return Math.max(raw, 62);
 }
 
 export function ShareMapPreview({ state }: ShareMapPreviewProps) {
@@ -56,6 +99,7 @@ export function ShareMapPreview({ state }: ShareMapPreviewProps) {
 			ensureRideabilityLayers(map);
 			ensureSinuosityLayer(map);
 			ensureReliefLayer(map);
+			ensureWeatherClassicLayers(map);
 			ensureRadarsLayers(map);
 			ensureRiskLayers(map);
 
@@ -74,6 +118,43 @@ export function ShareMapPreview({ state }: ShareMapPreviewProps) {
 								data.displayScores,
 								true,
 							);
+						})
+						.catch(() => undefined) ?? Promise.resolve(),
+				);
+			}
+
+			if (state.layers.weatherClassic) {
+				tasks.push(
+					rideabilityGridQueryOptions(at)
+						.queryFn?.()
+						.then((data) => {
+							if (!alive || !data) return;
+							applyWeatherClassicRasterToMap(
+								map,
+								data.samples.map((sample) => ({
+									lat: sample.lat,
+									lng: sample.lng,
+									score: weatherScoreFromSample(sample),
+								})),
+							);
+							applyWeatherClassicToMap(map, {
+								type: "FeatureCollection",
+								features: data.samples.map((sample) => {
+									const kind = weatherKindFromSample(sample);
+									return {
+										type: "Feature" as const,
+										properties: {
+											kind,
+											icon: weatherIcon(kind),
+											weatherScore: weatherScoreFromSample(sample),
+										},
+										geometry: {
+											type: "Point" as const,
+											coordinates: [sample.lng, sample.lat],
+										},
+									};
+								}),
+							});
 						})
 						.catch(() => undefined) ?? Promise.resolve(),
 				);

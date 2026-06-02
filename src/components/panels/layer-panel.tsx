@@ -1,5 +1,12 @@
 import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, Camera, CloudSun, Mountain, Route } from "lucide-react";
+import {
+	AlertTriangle,
+	Camera,
+	CloudSun,
+	Cloudy,
+	Mountain,
+	Route,
+} from "lucide-react";
 
 import {
 	GlassSheet,
@@ -18,6 +25,7 @@ import { LAYER_DEFINITIONS, type LayerId } from "#/types/layers";
 const LAYER_ICONS: Record<LayerId, LucideIcon> = {
 	sinuosity: Route,
 	rideability: CloudSun,
+	weatherClassic: Cloudy,
 	radars: Camera,
 	risk: AlertTriangle,
 	relief: Mountain,
@@ -76,7 +84,17 @@ export function LayerPanel() {
 										if (layer.id === "sinuosity" && v) {
 											setLayerEnabled("relief", false);
 										}
+										// Roulabilité et météo classique sont des vues météo alternatives.
+										if (layer.id === "rideability" && v) {
+											setLayerEnabled("weatherClassic", false);
+										}
+										if (layer.id === "weatherClassic" && v) {
+											setLayerEnabled("rideability", false);
+										}
 										if (layer.id === "rideability" && !v) {
+											setRideabilityPanelOpen(false);
+										}
+										if (layer.id === "weatherClassic" && !v) {
 											setRideabilityPanelOpen(false);
 										}
 									}}

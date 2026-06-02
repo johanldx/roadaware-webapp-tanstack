@@ -2,7 +2,7 @@
 
 export const HERO_COPY = {
 	subline:
-		"Zoomez sur une zone : les belles routes, la météo et le bon créneau — en un coup d’œil. Pas de GPS, pas de compte, juste la carte.",
+		"Carte moto IDF pour trouver un bon créneau météo motard, repérer les zones à virages et visualiser les radars autour de Paris. Pas de GPS, pas de compte, juste la carte.",
 	ctaPrimary: "Partir voir la carte",
 	ctaSecondary: "Comment ça marche",
 	ctaTry: "Tester maintenant",
@@ -28,7 +28,7 @@ export const HOW_IT_WORKS = [
 	{
 		title: "Lisez les calques",
 		description:
-			"Sinuosité, météo, radars ou historique d’accidents : un calque à la fois pour garder la carte lisible.",
+			"Sinuosité (virage moto IDF), météo motard, carte radars Paris et historique d’accidents : un calque à la fois pour garder la carte lisible.",
 	},
 	{
 		title: "Tranchez",
@@ -52,12 +52,14 @@ export const MAP_LAYERS = [
 	},
 	{
 		name: "Roulabilité",
-		description: "Pluie, vent, température et lumière — créneau par créneau.",
+		description:
+			"Météo pour motard : pluie, vent, température et lumière, créneau par créneau.",
 		tag: "Temps réel",
 	},
 	{
 		name: "Radars",
-		description: "Radars fixes officiels sur la zone affichée.",
+		description:
+			"Carte des radars fixes officiels à Paris et en Île-de-France.",
 		tag: "Officiel",
 	},
 	{
@@ -117,6 +119,12 @@ export const FOOTER_NAV = [
 	{ label: "Données", href: "#donnees" },
 	{ label: "Projet", href: "#projet" },
 	{ label: "Carte", href: "/app" },
+	{ label: "Météo pour motard", href: "/meteo-pour-motard" },
+	{ label: "Carte radars Paris", href: "/carte-radars-paris" },
+	{ label: "Virage moto IDF", href: "/virage-moto-idf" },
+	{ label: "Balade moto IDF", href: "/balade-moto-idf" },
+	{ label: "Sortie moto week-end IDF", href: "/sortie-moto-weekend-idf" },
+	{ label: "Sécurité moto pluie", href: "/securite-moto-pluie" },
 	{ label: "Mentions légales", href: "/legal" },
 	{ label: "CGU", href: "/legal#conditions" },
 ] as const;

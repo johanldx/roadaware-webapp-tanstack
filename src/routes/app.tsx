@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { APP_NAME } from "#/config/app";
+import { buildPageHead } from "#/config/seo";
+
 const mapSearchSchema = z.object({
 	/** État carte encodé (position, calques, météo, fond) */
 	s: z.string().optional(),
@@ -12,12 +15,11 @@ const mapSearchSchema = z.object({
 
 export const Route = createFileRoute("/app")({
 	validateSearch: mapSearchSchema,
-	head: () => ({
-		links: [
-			{
-				rel: "stylesheet",
-				href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap",
-			},
-		],
-	}),
+	head: () =>
+		buildPageHead({
+			path: "/app",
+			title: `Carte moto IDF — ${APP_NAME}`,
+			description:
+				"Carte interactive moto en Île-de-France : sinuosité, météo motard, radars fixes et historique d’accidents. Sans GPS, sans compte.",
+		}),
 });

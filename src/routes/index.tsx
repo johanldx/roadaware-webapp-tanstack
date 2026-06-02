@@ -3,26 +3,23 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LandingPage } from "#/components/landing/landing-page";
 import { ROOTAGE_HEAD_SCRIPTS } from "#/components/landing/rootage-embeds";
 import { APP_NAME, APP_TAGLINE } from "#/config/app";
+import { buildHomeJsonLd, buildPageHead } from "#/config/seo";
 
 export const Route = createFileRoute("/")({
-	head: () => ({
-		scripts: [...ROOTAGE_HEAD_SCRIPTS],
-		meta: [
-			{
-				title: `${APP_NAME} — ${APP_TAGLINE}`,
-			},
-			{
-				name: "description",
-				content:
-					"Carte gratuite pour motards en IDF : sinuosité, météo, radars et historique d’accidents moto (densité acc./km, ratio TMJA sur les axes comptés). Analyse de zone, pas de GPS.",
-			},
-		],
-		links: [
-			{
-				rel: "stylesheet",
-				href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap",
-			},
-		],
-	}),
+	head: () => {
+		const title = `${APP_NAME} — ${APP_TAGLINE}`;
+		const description =
+			"Météo pour motard, carte radars Paris et virage moto IDF : Roadaware aide à choisir la bonne zone et le bon créneau en Île-de-France avec des calques open data.";
+
+		return {
+			...buildPageHead({
+				path: "/",
+				title,
+				description,
+				jsonLd: buildHomeJsonLd(),
+			}),
+			scripts: [...ROOTAGE_HEAD_SCRIPTS],
+		};
+	},
 	component: LandingPage,
 });

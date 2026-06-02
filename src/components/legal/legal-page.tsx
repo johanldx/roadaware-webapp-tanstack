@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LandingFooter } from "#/components/landing/landing-footer";
-import { BetaBadge } from "#/components/ui/beta-badge";
+import { MinimalHeader } from "#/components/layout/minimal-header";
 import { APP_NAME } from "#/config/app";
 import {
 	LEGAL_HOST,
@@ -16,18 +15,7 @@ const SECTIONS = [
 export function LegalPage() {
 	return (
 		<div className="legal">
-			<header className="legal__header">
-				<div className="legal__header-inner">
-					<Link to="/" className="legal__logo">
-						<span className="landing__logo-mark" aria-hidden />
-						{APP_NAME}
-						<BetaBadge variant="nav" />
-					</Link>
-					<Link to="/app" className="legal__nav-cta">
-						Carte
-					</Link>
-				</div>
-			</header>
+			<MinimalHeader />
 
 			<main className="legal__main">
 				<div className="legal__intro">
@@ -308,8 +296,6 @@ export function LegalPage() {
 					<Link to="/">← Retour à l’accueil</Link>
 				</p>
 			</main>
-
-			<LandingFooter />
 		</div>
 	);
 }

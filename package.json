@@ -13,6 +13,7 @@
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "data:radars": "node scripts/export-radars-geojson.mjs",
     "data:sinuosity": "node scripts/export-sinuosity-geojson.mjs",
     "data:sinuosity:merge": "node scripts/export-sinuosity-geojson.mjs --merge-only",

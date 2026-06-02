@@ -6,6 +6,7 @@ import { LAYER_DEFINITIONS, type LayerId } from "#/types/layers";
 const LAYER_CHAR: Record<LayerId, string> = {
 	sinuosity: "s",
 	rideability: "r",
+	weatherClassic: "w",
 	radars: "d",
 	risk: "k",
 	relief: "e",

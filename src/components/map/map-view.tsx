@@ -8,6 +8,7 @@ import { useReliefMapLayer } from "#/features/layers/relief";
 import { useRiskMapLayer, useRiskPopup } from "#/features/layers/risk";
 import { ensureRiskLayers } from "#/features/layers/risk/layer";
 import { useSinuosityMapLayer } from "#/features/layers/sinuosity";
+import { useWeatherClassicMapLayer } from "#/features/layers/weather-classic";
 import { useBasemapStore } from "#/features/map/hooks/use-basemap-store";
 import { switchBasemapStyle } from "#/features/map/switch-basemap";
 import { useMapZonePopup } from "#/features/rideability/hooks/use-map-zone-popup";
@@ -31,6 +32,7 @@ export function MapView() {
 	const basemapIdRef = useRef(basemapId);
 
 	useRideabilityMapLayer();
+	useWeatherClassicMapLayer();
 	useSinuosityMapLayer();
 	useReliefMapLayer();
 	useRadarsMapLayer();

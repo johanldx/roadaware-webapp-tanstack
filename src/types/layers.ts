@@ -1,6 +1,7 @@
 export type LayerId =
 	| "sinuosity"
 	| "rideability"
+	| "weatherClassic"
 	| "radars"
 	| "risk"
 	| "relief";
@@ -32,6 +33,14 @@ export const LAYER_DEFINITIONS: Record<LayerId, LayerDefinition> = {
 		description: "Carte colorée selon météo, lumière et conditions de ride",
 		defaultEnabled: true,
 		minZoom: 0,
+		available: true,
+	},
+	weatherClassic: {
+		id: "weatherClassic",
+		label: "Météo classique",
+		description: "Icônes pluie, vent, soleil ou nuit selon la zone",
+		defaultEnabled: false,
+		minZoom: 7,
 		available: true,
 	},
 	radars: {

@@ -9,19 +9,55 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VirageMotoIdfRouteImport } from './routes/virage-moto-idf'
+import { Route as SortieMotoWeekendIdfRouteImport } from './routes/sortie-moto-weekend-idf'
 import { Route as ShareRouteImport } from './routes/share'
+import { Route as SecuriteMotoPluieRouteImport } from './routes/securite-moto-pluie'
+import { Route as MeteoPourMotardRouteImport } from './routes/meteo-pour-motard'
 import { Route as LegalRouteImport } from './routes/legal'
+import { Route as CarteRadarsParisRouteImport } from './routes/carte-radars-paris'
+import { Route as BaladeMotoIdfRouteImport } from './routes/balade-moto-idf'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VirageMotoIdfRoute = VirageMotoIdfRouteImport.update({
+  id: '/virage-moto-idf',
+  path: '/virage-moto-idf',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SortieMotoWeekendIdfRoute = SortieMotoWeekendIdfRouteImport.update({
+  id: '/sortie-moto-weekend-idf',
+  path: '/sortie-moto-weekend-idf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShareRoute = ShareRouteImport.update({
   id: '/share',
   path: '/share',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SecuriteMotoPluieRoute = SecuriteMotoPluieRouteImport.update({
+  id: '/securite-moto-pluie',
+  path: '/securite-moto-pluie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeteoPourMotardRoute = MeteoPourMotardRouteImport.update({
+  id: '/meteo-pour-motard',
+  path: '/meteo-pour-motard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalRoute = LegalRouteImport.update({
   id: '/legal',
   path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteRadarsParisRoute = CarteRadarsParisRouteImport.update({
+  id: '/carte-radars-paris',
+  path: '/carte-radars-paris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BaladeMotoIdfRoute = BaladeMotoIdfRouteImport.update({
+  id: '/balade-moto-idf',
+  path: '/balade-moto-idf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -38,39 +74,108 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/balade-moto-idf': typeof BaladeMotoIdfRoute
+  '/carte-radars-paris': typeof CarteRadarsParisRoute
   '/legal': typeof LegalRoute
+  '/meteo-pour-motard': typeof MeteoPourMotardRoute
+  '/securite-moto-pluie': typeof SecuriteMotoPluieRoute
   '/share': typeof ShareRoute
+  '/sortie-moto-weekend-idf': typeof SortieMotoWeekendIdfRoute
+  '/virage-moto-idf': typeof VirageMotoIdfRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/balade-moto-idf': typeof BaladeMotoIdfRoute
+  '/carte-radars-paris': typeof CarteRadarsParisRoute
   '/legal': typeof LegalRoute
+  '/meteo-pour-motard': typeof MeteoPourMotardRoute
+  '/securite-moto-pluie': typeof SecuriteMotoPluieRoute
   '/share': typeof ShareRoute
+  '/sortie-moto-weekend-idf': typeof SortieMotoWeekendIdfRoute
+  '/virage-moto-idf': typeof VirageMotoIdfRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/balade-moto-idf': typeof BaladeMotoIdfRoute
+  '/carte-radars-paris': typeof CarteRadarsParisRoute
   '/legal': typeof LegalRoute
+  '/meteo-pour-motard': typeof MeteoPourMotardRoute
+  '/securite-moto-pluie': typeof SecuriteMotoPluieRoute
   '/share': typeof ShareRoute
+  '/sortie-moto-weekend-idf': typeof SortieMotoWeekendIdfRoute
+  '/virage-moto-idf': typeof VirageMotoIdfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/legal' | '/share'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/balade-moto-idf'
+    | '/carte-radars-paris'
+    | '/legal'
+    | '/meteo-pour-motard'
+    | '/securite-moto-pluie'
+    | '/share'
+    | '/sortie-moto-weekend-idf'
+    | '/virage-moto-idf'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/legal' | '/share'
-  id: '__root__' | '/' | '/app' | '/legal' | '/share'
+  to:
+    | '/'
+    | '/app'
+    | '/balade-moto-idf'
+    | '/carte-radars-paris'
+    | '/legal'
+    | '/meteo-pour-motard'
+    | '/securite-moto-pluie'
+    | '/share'
+    | '/sortie-moto-weekend-idf'
+    | '/virage-moto-idf'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/balade-moto-idf'
+    | '/carte-radars-paris'
+    | '/legal'
+    | '/meteo-pour-motard'
+    | '/securite-moto-pluie'
+    | '/share'
+    | '/sortie-moto-weekend-idf'
+    | '/virage-moto-idf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
+  BaladeMotoIdfRoute: typeof BaladeMotoIdfRoute
+  CarteRadarsParisRoute: typeof CarteRadarsParisRoute
   LegalRoute: typeof LegalRoute
+  MeteoPourMotardRoute: typeof MeteoPourMotardRoute
+  SecuriteMotoPluieRoute: typeof SecuriteMotoPluieRoute
   ShareRoute: typeof ShareRoute
+  SortieMotoWeekendIdfRoute: typeof SortieMotoWeekendIdfRoute
+  VirageMotoIdfRoute: typeof VirageMotoIdfRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/virage-moto-idf': {
+      id: '/virage-moto-idf'
+      path: '/virage-moto-idf'
+      fullPath: '/virage-moto-idf'
+      preLoaderRoute: typeof VirageMotoIdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sortie-moto-weekend-idf': {
+      id: '/sortie-moto-weekend-idf'
+      path: '/sortie-moto-weekend-idf'
+      fullPath: '/sortie-moto-weekend-idf'
+      preLoaderRoute: typeof SortieMotoWeekendIdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/share': {
       id: '/share'
       path: '/share'
@@ -78,11 +183,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/securite-moto-pluie': {
+      id: '/securite-moto-pluie'
+      path: '/securite-moto-pluie'
+      fullPath: '/securite-moto-pluie'
+      preLoaderRoute: typeof SecuriteMotoPluieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meteo-pour-motard': {
+      id: '/meteo-pour-motard'
+      path: '/meteo-pour-motard'
+      fullPath: '/meteo-pour-motard'
+      preLoaderRoute: typeof MeteoPourMotardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal': {
       id: '/legal'
       path: '/legal'
       fullPath: '/legal'
       preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carte-radars-paris': {
+      id: '/carte-radars-paris'
+      path: '/carte-radars-paris'
+      fullPath: '/carte-radars-paris'
+      preLoaderRoute: typeof CarteRadarsParisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/balade-moto-idf': {
+      id: '/balade-moto-idf'
+      path: '/balade-moto-idf'
+      fullPath: '/balade-moto-idf'
+      preLoaderRoute: typeof BaladeMotoIdfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -105,8 +238,14 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
+  BaladeMotoIdfRoute: BaladeMotoIdfRoute,
+  CarteRadarsParisRoute: CarteRadarsParisRoute,
   LegalRoute: LegalRoute,
+  MeteoPourMotardRoute: MeteoPourMotardRoute,
+  SecuriteMotoPluieRoute: SecuriteMotoPluieRoute,
   ShareRoute: ShareRoute,
+  SortieMotoWeekendIdfRoute: SortieMotoWeekendIdfRoute,
+  VirageMotoIdfRoute: VirageMotoIdfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

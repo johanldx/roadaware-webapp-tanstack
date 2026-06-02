@@ -15,6 +15,7 @@ describe("map-share-payload", () => {
 		layers: {
 			sinuosity: true,
 			rideability: true,
+			weatherClassic: false,
 			radars: false,
 			risk: true,
 			relief: false,

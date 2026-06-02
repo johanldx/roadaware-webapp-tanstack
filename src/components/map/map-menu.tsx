@@ -9,14 +9,18 @@ import { cn } from "#/lib/utils";
 import { openLayersPanel, openRideabilityPanel } from "#/stores/map-panels";
 
 function formatSelectedTimeShort(d: Date) {
-	return d.toLocaleString("fr-FR", {
+	const date = new Intl.DateTimeFormat("fr-FR", {
 		timeZone: "Europe/Paris",
-		weekday: "short",
 		day: "numeric",
 		month: "short",
+	}).format(d);
+	const time = new Intl.DateTimeFormat("fr-FR", {
+		timeZone: "Europe/Paris",
 		hour: "2-digit",
 		minute: "2-digit",
-	});
+		hour12: false,
+	}).format(d);
+	return `${date} · ${time}`;
 }
 
 interface MapMenuProps {
@@ -26,6 +30,8 @@ interface MapMenuProps {
 
 export function MapMenu({ layersOpen, rideabilityOpen }: MapMenuProps) {
 	const rideabilityOn = useLayersStore((s) => s.enabled.rideability);
+	const weatherClassicOn = useLayersStore((s) => s.enabled.weatherClassic);
+	const weatherModeOn = rideabilityOn || weatherClassicOn;
 	const selectedAt = useRideabilityStore((s) => s.selectedAt);
 
 	return (
@@ -45,22 +51,27 @@ export function MapMenu({ layersOpen, rideabilityOpen }: MapMenuProps) {
 
 			<span className="map-app__float-sep" aria-hidden />
 
-			{rideabilityOn && (
-				<button
-					type="button"
-					className={cn(
-						"map-app__float-btn",
-						rideabilityOpen && "map-app__float-btn--active",
-					)}
-					aria-pressed={rideabilityOpen}
-					title={`Roulabilité · ${formatSelectedTimeShort(selectedAt)}`}
-					onClick={openRideabilityPanel}
-				>
-					<Clock className="size-[1.05rem]" strokeWidth={2} aria-hidden />
-					<span className="sr-only">
-						Roulabilité, {formatSelectedTimeShort(selectedAt)}
+			{weatherModeOn && (
+				<>
+					<button
+						type="button"
+						className={cn(
+							"map-app__float-btn",
+							rideabilityOpen && "map-app__float-btn--active",
+						)}
+						aria-pressed={rideabilityOpen}
+						title={`Meteo · ${formatSelectedTimeShort(selectedAt)}`}
+						onClick={openRideabilityPanel}
+					>
+						<Clock className="size-[1.05rem]" strokeWidth={2} aria-hidden />
+						<span className="sr-only">
+							Meteo, {formatSelectedTimeShort(selectedAt)}
+						</span>
+					</button>
+					<span className="map-app__float-time" aria-live="polite">
+						{formatSelectedTimeShort(selectedAt)}
 					</span>
-				</button>
+				</>
 			)}
 
 			<button

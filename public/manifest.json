@@ -1,6 +1,8 @@
 {
-  "short_name": "TanStack App",
-  "name": "Create TanStack App Sample",
+  "short_name": "Roadaware",
+  "name": "Roadaware — carte moto IDF",
+  "description": "Carte moto open data en Île-de-France : météo, radars, virages et risque accident.",
+  "lang": "fr",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +20,8 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/app",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#1a2e26",
+  "background_color": "#f6f7f5"
 }

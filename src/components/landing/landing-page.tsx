@@ -15,12 +15,9 @@ import {
 	HERO_COPY,
 	HOW_IT_WORKS,
 	MAP_LAYERS,
-	RISK_DATA_COVERAGE,
-	RISK_TMJA_NOTE,
 } from "#/config/landing";
 
 import { CreatorPhoto } from "./creator-photo";
-import { LandingFooter } from "./landing-footer";
 
 const NAV = [
 	{ label: "Produit", href: "#produit" },
@@ -33,13 +30,6 @@ const STEP_ICONS = [MapPin, Layers3, CircleCheck] as const;
 const LAYER_BETA_NAMES = new Set(["Sinuosité", "Relief", "Risque accident"]);
 
 export function LandingPage() {
-	const precomputedLayers = MAP_LAYERS.filter(
-		(layer) => layer.tag === "Précalculé",
-	);
-	const fetchedLayers = MAP_LAYERS.filter(
-		(layer) => layer.tag !== "Précalculé",
-	);
-
 	return (
 		<div className="landing">
 			<div className="landing__hero-wrap">
@@ -154,25 +144,20 @@ export function LandingPage() {
 							</p>
 						</header>
 
-						<ol className="landing-steps landing-steps--data">
-							<li className="landing-step-card landing-step-card--data">
+						<div className="landing-data-simple">
+							<article className="landing-data-simple__card">
 								<div className="landing-step-card__icon" aria-hidden>
 									<Layers3 className="size-5" strokeWidth={1.75} />
 								</div>
-								<span className="landing-step-card__index">01</span>
-								<h3 className="landing-step-card__title">Lisez les calques</h3>
+								<h3 className="landing-step-card__title">Calques clairs</h3>
 								<p className="landing-step-card__desc">
-									Un calque, un signal. Vous combinez sans surcharger l’écran.
+									Activez un calque à la fois pour garder une lecture simple de
+									la zone.
 								</p>
-								<ul
-									className="landing-data-step-layers"
-									aria-label="Liste des calques"
-								>
+								<ul className="landing-data-simple__list">
 									{MAP_LAYERS.map((layer) => (
-										<li key={layer.name} className="landing-data-step-layer">
-											<p className="landing-data-step-layer__name">
-												{layer.name}
-											</p>
+										<li key={layer.name} className="landing-data-simple__item">
+											<span>{layer.name}</span>
 											<div className="landing-showcase-layer-card__badges">
 												<span
 													className="landing-layer-card__tag"
@@ -189,18 +174,15 @@ export function LandingPage() {
 										</li>
 									))}
 								</ul>
-							</li>
+							</article>
 
-							<li className="landing-step-card landing-step-card--data">
+							<article className="landing-data-simple__card">
 								<div className="landing-step-card__icon" aria-hidden>
 									<ExternalLink className="size-5" strokeWidth={1.75} />
 								</div>
-								<span className="landing-step-card__index">02</span>
-								<h3 className="landing-step-card__title">
-									Vérifiez les sources
-								</h3>
+								<h3 className="landing-step-card__title">Sources publiques</h3>
 								<p className="landing-step-card__desc">
-									Chaque donnée pointe vers une source publique consultable.
+									Données open data et officielles, consultables en un clic.
 								</p>
 								<ul className="landing-sources-card__list landing-sources-card__list--inline">
 									{DATA_SOURCES.map(({ name, href }) => (
@@ -221,51 +203,11 @@ export function LandingPage() {
 										</li>
 									))}
 								</ul>
-							</li>
-
-							<li className="landing-step-card landing-step-card--data">
-								<div className="landing-step-card__icon" aria-hidden>
-									<CircleCheck className="size-5" strokeWidth={1.75} />
-								</div>
-								<span className="landing-step-card__index">03</span>
-								<h3 className="landing-step-card__title">Gardez le contexte</h3>
-								<p className="landing-step-card__desc">
-									La carte éclaire une décision, elle ne remplace pas votre
-									jugement terrain.
+								<p className="landing-data-simple__note">
+									Outil d’information : pas de GPS, pas de guidage vocal.
 								</p>
-								<div className="landing-data-step-lists">
-									<div>
-										<p className="landing-showcase-note__list-title">
-											Précalculé
-										</p>
-										<ul className="landing-showcase-note__list">
-											{precomputedLayers.map((layer) => (
-												<li key={layer.name}>{layer.name}</li>
-											))}
-										</ul>
-									</div>
-									<div>
-										<p className="landing-showcase-note__list-title">
-											Récupéré
-										</p>
-										<ul className="landing-showcase-note__list">
-											{fetchedLayers.map((layer) => (
-												<li key={layer.name}>{layer.name}</li>
-											))}
-										</ul>
-									</div>
-								</div>
-								<p className="landing-data-step-note">
-									{RISK_TMJA_NOTE.lead} {RISK_DATA_COVERAGE.tmjaMatchedSegments}{" "}
-									tronçons avec TMJA sur {RISK_DATA_COVERAGE.riskSegments} (
-									{RISK_DATA_COVERAGE.years}).
-								</p>
-								<p className="landing-data-step-disclaimer">
-									Outil d’information uniquement : pas de navigation, pas de
-									guidage vocal. Tendance historique BAAC, pas un danger absolu.
-								</p>
-							</li>
-						</ol>
+							</article>
+						</div>
 
 						<div className="landing-band__cta">
 							<Link to="/app" className="landing__pill landing__pill--primary">
@@ -274,6 +216,50 @@ export function LandingPage() {
 									→
 								</span>
 							</Link>
+						</div>
+
+						<div className="landing-band__cta">
+							<ul className="landing-sources-card__list landing-sources-card__list--inline">
+								<li>
+									<Link to="/meteo-pour-motard" className="landing-source-chip">
+										Guide météo motard
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/carte-radars-paris"
+										className="landing-source-chip"
+									>
+										Guide carte radars Paris
+									</Link>
+								</li>
+								<li>
+									<Link to="/virage-moto-idf" className="landing-source-chip">
+										Guide virage moto IDF
+									</Link>
+								</li>
+								<li>
+									<Link to="/balade-moto-idf" className="landing-source-chip">
+										Guide balade moto IDF
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/sortie-moto-weekend-idf"
+										className="landing-source-chip"
+									>
+										Guide sortie week-end
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/securite-moto-pluie"
+										className="landing-source-chip"
+									>
+										Guide sécurité sous pluie
+									</Link>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</section>
@@ -329,8 +315,6 @@ export function LandingPage() {
 					</div>
 				</section>
 			</main>
-
-			<LandingFooter />
 		</div>
 	);
 }

@@ -5,9 +5,11 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
+	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { APP_NAME } from "#/config/app";
+import { LandingFooter } from "#/components/landing/landing-footer";
+import { SITE_BASE_LINKS } from "#/config/seo";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanstackQueryProvider from "../integrations/tanstack-query/root-provider";
 import appCss from "../styles.css?url";
@@ -27,7 +29,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1, viewport-fit=cover",
 			},
 			{
-				title: APP_NAME,
+				name: "theme-color",
+				content: "#1a2e26",
 			},
 		],
 		links: [
@@ -35,6 +38,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				rel: "stylesheet",
 				href: appCss,
 			},
+			...SITE_BASE_LINKS,
 		],
 	}),
 	component: RootLayout,
@@ -42,9 +46,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootLayout() {
+	const pathname = useRouterState({
+		select: (state) => state.location.pathname,
+	});
+	const hideFooter =
+		pathname.startsWith("/app") || pathname.startsWith("/share");
+
 	return (
 		<TanstackQueryProvider>
 			<Outlet />
+			{hideFooter ? null : <LandingFooter />}
 		</TanstackQueryProvider>
 	);
 }

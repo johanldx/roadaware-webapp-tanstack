@@ -6,7 +6,8 @@ import {
 	Satellite,
 	Share2,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import maplibregl from "maplibre-gl";
+import { type ReactNode, useEffect, useRef } from "react";
 
 import { BASEMAP_LABELS } from "#/config/map";
 import { useBasemapStore } from "#/features/map/hooks/use-basemap-store";
@@ -51,6 +52,14 @@ export function MapToolbar({ onShare }: MapToolbarProps) {
 	const basemapId = useBasemapStore((s) => s.basemapId);
 	const isSatellite = basemapId === "satellite";
 	const basemapMeta = BASEMAP_LABELS[basemapId];
+	const locateMarkerRef = useRef<maplibregl.Marker | null>(null);
+
+	useEffect(() => {
+		return () => {
+			locateMarkerRef.current?.remove();
+			locateMarkerRef.current = null;
+		};
+	}, []);
 
 	const zoomIn = () => map?.zoomIn({ duration: 280 });
 	const zoomOut = () => map?.zoomOut({ duration: 280 });
@@ -58,12 +67,23 @@ export function MapToolbar({ onShare }: MapToolbarProps) {
 		if (!map || !navigator.geolocation) return;
 		navigator.geolocation.getCurrentPosition(
 			(pos) => {
+				const lngLat = [pos.coords.longitude, pos.coords.latitude] as const;
 				map.flyTo({
-					center: [pos.coords.longitude, pos.coords.latitude],
-					zoom: 11,
+					center: lngLat,
+					zoom: 12.6,
 					duration: 1400,
 					essential: true,
 				});
+
+				if (!locateMarkerRef.current) {
+					const dot = document.createElement("span");
+					dot.className = "map-app__locate-dot";
+					locateMarkerRef.current = new maplibregl.Marker({
+						element: dot,
+						anchor: "center",
+					});
+				}
+				locateMarkerRef.current.setLngLat(lngLat).addTo(map);
 			},
 			() => undefined,
 			{ enableHighAccuracy: true, timeout: 8000 },
