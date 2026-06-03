@@ -8,6 +8,7 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { APP_NAME } from "#/config/app";
 import { LandingFooter } from "#/components/landing/landing-footer";
 import { SITE_BASE_LINKS } from "#/config/seo";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
@@ -31,6 +32,22 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{
 				name: "theme-color",
 				content: "#1a2e26",
+			},
+			{
+				name: "application-name",
+				content: APP_NAME,
+			},
+			{
+				name: "apple-mobile-web-app-title",
+				content: APP_NAME,
+			},
+			{
+				name: "format-detection",
+				content: "telephone=no",
+			},
+			{
+				name: "referrer",
+				content: "strict-origin-when-cross-origin",
 			},
 		],
 		links: [

@@ -1,27 +1,22 @@
 {
+  "id": "/",
   "short_name": "Roadaware",
   "name": "Roadaware — carte moto IDF",
   "description": "Carte moto open data en Île-de-France : météo, radars, virages et risque accident.",
   "lang": "fr",
+  "dir": "ltr",
+  "scope": "/",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
+      "src": "favicon.png",
       "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "559x559",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/app",
   "display": "standalone",
+  "categories": ["navigation", "maps"],
   "theme_color": "#1a2e26",
   "background_color": "#f6f7f5"
 }

@@ -4,7 +4,7 @@
  * Source : cache Overpass sinuosité (pnpm data:sinuosity).
  *
  * Usage : node scripts/export-road-network.mjs
- * Sortie : public/data/roads-idf.geojson
+ * Sortie : data/processed/roads-idf.geojson (intermédiaire pipeline, non servi au front)
  */
 
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -15,7 +15,7 @@ import { loadSegmentsFromTileDir } from "./lib/road-segment-index.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TILE_DIR = join(ROOT, "public/data/.sinuosity-tiles");
-const OUT = join(ROOT, "public/data/roads-idf.geojson");
+const OUT = join(ROOT, "data/processed/roads-idf.geojson");
 
 function simplifyCoords(coords, maxPts = 12) {
 	if (coords.length <= maxPts) return coords;

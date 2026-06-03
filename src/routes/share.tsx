@@ -17,8 +17,10 @@ export const Route = createFileRoute("/share")({
 			path: "/share",
 			title: `Aperçu partagé — ${APP_NAME}`,
 			description:
-				"Aperçu d’une vue carte Roadaware partagée. Outil d’information moto en Île-de-France.",
+				"Vue carte Roadaware partagée : météo motard, radars et zones à virages en Île-de-France. Ouvrez l’aperçu pour explorer la carte.",
 			robots: "noindex, nofollow",
+			ogImageAlt:
+				"Aperçu d’une carte moto Roadaware partagée en Île-de-France",
 		}),
 	component: SharePage,
 });

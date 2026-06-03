@@ -1,0 +1,24 @@
+{
+	"origin": "https://roadaware.gondawa.fr",
+	"ogImage": {
+		"path": "/og-image.png",
+		"width": 1292,
+		"height": 859,
+		"type": "image/png",
+		"alt": "Roadaware — carte moto open data en Île-de-France : météo motard, radars et virages"
+	},
+	"sitemap": [
+		{ "path": "/", "changefreq": "weekly", "priority": "1.0" },
+		{ "path": "/meteo-pour-motard", "changefreq": "monthly", "priority": "0.9" },
+		{ "path": "/carte-radars-paris", "changefreq": "monthly", "priority": "0.9" },
+		{ "path": "/virage-moto-idf", "changefreq": "monthly", "priority": "0.9" },
+		{ "path": "/balade-moto-idf", "changefreq": "monthly", "priority": "0.9" },
+		{
+			"path": "/sortie-moto-weekend-idf",
+			"changefreq": "monthly",
+			"priority": "0.9"
+		},
+		{ "path": "/securite-moto-pluie", "changefreq": "monthly", "priority": "0.9" },
+		{ "path": "/legal", "changefreq": "yearly", "priority": "0.4" }
+	]
+}

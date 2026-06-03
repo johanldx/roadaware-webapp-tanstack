@@ -27,7 +27,7 @@ import { loadTmjaIndex, matchTmjaToSegment } from "./lib/tmja-index.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public/data/risk-idf.geojson");
-const ROADS_GEOJSON = join(ROOT, "public/data/roads-idf.geojson");
+const ROADS_GEOJSON = join(ROOT, "data/processed/roads-idf.geojson");
 const TILE_DIR = join(ROOT, "public/data/.sinuosity-tiles");
 const TMJA_CACHE = join(ROOT, "public/data/tmja-idf-index.json");
 
