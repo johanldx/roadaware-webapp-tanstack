@@ -9,6 +9,7 @@ public/data/.elevation-grid-idf.json
 # Données volumineuses
 data/raw/**
 data/processed/**
+public/data/roads-idf.geojson
 !data/README.md
 !data/raw/.gitkeep
 !data/processed/.gitkeep

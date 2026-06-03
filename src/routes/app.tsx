@@ -22,5 +22,6 @@ export const Route = createFileRoute("/app")({
 			title: `Carte moto IDF — ${APP_NAME}`,
 			description:
 				"Carte interactive moto en Île-de-France : sinuosité, météo motard, radars fixes et historique d’accidents. Sans GPS, sans compte.",
+			robots: "noindex, follow",
 		}),
 });

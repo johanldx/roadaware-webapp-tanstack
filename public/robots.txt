@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-# États de carte partagés (URLs dynamiques) — ne pas indexer
+# Outil carte (SPA, peu de contenu indexable) et aperçus partagés dynamiques
+Disallow: /app
 Disallow: /share
 
 Sitemap: https://roadaware.gondawa.fr/sitemap.xml
